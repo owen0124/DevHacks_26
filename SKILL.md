@@ -5,7 +5,8 @@ description: Texts the student a "Go now?" reminder before a class or office hou
 
 # Class to Map
 
-This Skill uses only Cubbie's built-in abilities. It has no scripts.
+This Skill uses Cubbie's built-in abilities plus a walking map of ASU's Tempe campus (`scripts/route.mjs`, run with
+Node). The map needs no keys, logins or network.
 
 ## When to use
 
@@ -36,9 +37,15 @@ Cubbie's **memory** so it is never asked twice:
    Never guess a time or building.
    Look up the building's street address on the **web**. If it cannot be found, ask the student for it.
    If the event is at the student's starting point, say no trip is needed and do not set a leave reminder.
-2. Work out the travel time from the starting address to the building's address. Use the **web** to find the
-   distance, then estimate: walking about 12 min per km (20 min per mile), bike about 4 min per km, bus or car:
-   the typical trip time plus 5 minutes. Round up to the next 5 minutes and say "about".
+2. Work out the travel time from the starting address to the building's address.
+   - Walking on or near ASU's Tempe campus (including Tempe Transportation Center and Mill Avenue): run
+     `node scripts/route.mjs route "<start>" "<building>"` with the place names the student used or campus
+     nicknames such as MU, SDFC or TTC. Use the minutes it prints as the walking time and keep its numbered
+     steps for the "go" reply. If it prints "Unknown place", run `node scripts/route.mjs find "<one word>"` and
+     retry with the closest match. If nothing matches, estimate as below.
+   - Anything else: use the **web** to find the distance, then estimate: walking about 12 min per km (20 min per
+     mile), bike about 4 min per km, bus or car: the typical trip time plus 5 minutes. Round up to the next
+     5 minutes and say "about".
    For a Zoom event, travel time is zero; plan the reminder 5 minutes before the start instead.
 3. Pick the reminder time: start time minus travel time minus buffer. If that time has already passed, tell the
    student right away to leave now and include the link from step 5.
@@ -75,11 +82,13 @@ https://www.google.com/maps/dir/?api=1&origin=200+E+5th+St%2C+Tempe%2C+AZ&destin
 
 If the student asks for a test or a fake class, use a real building near their starting point that is a different
 place and at least a 5-minute trip away. Set the start time so the reminder fires in about 3 minutes. Say "test" in
-the reminder text and do not add the event to their calendar.
+the reminder text and do not add the event to their calendar. On ASU's Tempe campus a good test is Tempe
+Transportation Center to the Memorial Union, about 12 minutes on foot.
 
 ## When the reminder fires and the student replies
 
 - "go" (or "yes", "confirm", "leaving"): reply with the directions link on its own line and one encouraging line.
+  If the campus map gave steps, put up to three of them as short lines before the link.
   For Zoom, send the Zoom link on its own line and say tapping it opens Zoom and puts them in the waiting room.
 - "no" or "deny" without a time: ask "Remind you again in 5, 15 or 30 min, or skip today?"
 - "snooze 5", "snooze 15", "snooze 30" (or just "15"): create a one-time reminder that many minutes from now with
@@ -111,3 +120,8 @@ plainly if the student asks for any of these.
 - Canvas or Google not connected and no time given: ask for the event details, or offer to connect the account.
 - Building not found: ask for the address or a nearby landmark.
 - A reminder could not be created: say which one and offer to retry once. Do not retry silently.
+
+## Credits
+
+Campus walking data in `assets/campus.json` © OpenStreetMap contributors, under the Open Database License
+(https://www.openstreetmap.org/copyright).
