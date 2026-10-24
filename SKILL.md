@@ -40,8 +40,8 @@ Cubbie's **memory** so it is never asked twice:
 2. Work out the travel time from the starting address to the building's address.
    - Walking on or near ASU's Tempe campus (including Tempe Transportation Center and Mill Avenue): run
      `node scripts/route.mjs route "<start>" "<building>"` with the place names the student used or campus
-     nicknames such as MU, SDFC or TTC. Use the minutes it prints as the walking time and keep its numbered
-     steps for the "go" reply. If it prints "Unknown place", run `node scripts/route.mjs find "<one word>"` and
+     nicknames such as MU, SDFC or TTC. Use the minutes it prints as the walking time, and keep its numbered
+     steps and its last line, the campus map link, for the reminder and the "go" reply. If it prints "Unknown place", run `node scripts/route.mjs find "<one word>"` and
      retry with the closest match. If nothing matches, estimate as below.
    - Anything else: use the **web** to find the distance, then estimate: walking about 12 min per km (20 min per
      mile), bike about 4 min per km, bus or car: the typical trip time plus 5 minutes. Round up to the next
@@ -61,7 +61,11 @@ Cubbie's **memory** so it is never asked twice:
 
 ## Building the map link
 
-Build the link yourself from the template for the student's map app. Do not search the web for a link and do not
+For a campus walk that `scripts/route.mjs` handled in step 2, the link is the campus map link it printed, copied
+exactly (it starts with `https://nikman800.github.io/asu-map/`). It opens the route on a campus map with the
+walking steps and a button for Google Maps.
+
+For any other trip, build the link yourself from the template for the student's map app. Do not search the web for a link and do not
 try to verify it: these URLs work for any address. Never send another kind of link instead (a building's web page,
 Street View, a search results page) and never add a note about the link.
 
@@ -88,7 +92,8 @@ Transportation Center to the Memorial Union, about 12 minutes on foot.
 ## When the reminder fires and the student replies
 
 - "go" (or "yes", "confirm", "leaving"): reply with the directions link on its own line and one encouraging line.
-  If the campus map gave steps, put up to three of them as short lines before the link.
+  If the campus map gave steps, put up to three of them as short lines before the campus map link, and add the
+  student's map-app link from the template on its own line after it for turn-by-turn directions.
   For Zoom, send the Zoom link on its own line and say tapping it opens Zoom and puts them in the waiting room.
 - "no" or "deny" without a time: ask "Remind you again in 5, 15 or 30 min, or skip today?"
 - "snooze 5", "snooze 15", "snooze 30" (or just "15"): create a one-time reminder that many minutes from now with
