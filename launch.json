@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "React Native",
+            "type": "react-native",
+            "request": "launch",
+            "platform": "windows",
+            "sourceMaps": true
+        }
+    ]
+}
