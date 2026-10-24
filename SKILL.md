@@ -22,8 +22,9 @@ Do not use it for assignment due dates, study plans or emailing a professor.
 Ask one question at a time, offer a default the student can accept with "yes", and remember each answer with
 Cubbie's **memory** so it is never asked twice:
 
-1. Where they usually leave from (for example their dorm or apartment). Default: ask each time. Look up its street
-   address, confirm it in one line ("Tempe Transportation Center, 200 E 5th St, Tempe, AZ?") and remember the address.
+1. Their home base: where they usually are before their first class of the day (for example their dorm or
+   apartment). Look up its street address, confirm it in one line ("Tempe Transportation Center, 200 E 5th St,
+   Tempe, AZ?") and remember it.
 2. How they get around: walking, bike, bus or car. Default: walking.
 3. How much extra buffer they want before the event. Default: 5 minutes.
 4. Their preferred map app: Apple Maps or Google Maps. Default: Apple Maps.
@@ -35,24 +36,33 @@ Cubbie's **memory** so it is never asked twice:
    Zoom (look for a Zoom link in the calendar event, Canvas course page or announcement).
    If neither account is connected and the student gave no time, ask for the event name, day, time and location.
    Never guess a time or building.
-   Look up the building's street address on the **web**. If it cannot be found, ask the student for it.
-   If the event is at the student's starting point, say no trip is needed and do not set a leave reminder.
-2. Work out the travel time from the starting address to the building's address.
+2. Work out where the student will be just before it. Cubbie cannot see the student's location, so use their
+   schedule: if another in-person class or event on the same day ends within 60 minutes before this one starts,
+   they start from that event's building (for example "PHY 121 in PSF, ends 9:15"). Otherwise they start from
+   their home base. Ignore Zoom events when looking for the previous one.
+   For a repeating reminder, do this for each weekday; if the starting point differs by day (Monday after a class
+   in PSF, Wednesday from home), create one repeating reminder per weekday.
+   If the starting point is the event's own building, say no trip is needed and do not set a leave reminder.
+3. Work out the travel time from the starting point to the event's building.
    - Walking on or near ASU's Tempe campus (including Tempe Transportation Center and Mill Avenue): run
-     `node scripts/route.mjs route "<start>" "<building>"` with the place names the student used or campus
-     nicknames such as MU, SDFC or TTC. Use the minutes it prints as the walking time, and keep its numbered
-     steps and its last line, the campus map link, for the reminder and the "go" reply. If it prints "Unknown place", run `node scripts/route.mjs find "<one word>"` and
-     retry with the closest match. If nothing matches, estimate as below.
-   - Anything else: use the **web** to find the distance, then estimate: walking about 12 min per km (20 min per
-     mile), bike about 4 min per km, bus or car: the typical trip time plus 5 minutes. Round up to the next
-     5 minutes and say "about".
+     `node scripts/route.mjs route "<start>" "<building>" --live`. Pass places as the schedule writes them
+     ("PSF 101", "COOR 170": building code and room work), as the student named them, or as campus nicknames
+     such as MU, SDFC or TTC. Use the minutes it prints as the walking time, and keep its numbered steps and its
+     last line, the campus map link. That link routes from wherever the student is when they tap it, and from
+     the starting point if their phone's location is off.
+     If it prints "Unknown place", run `node scripts/route.mjs find "<one word>"` and retry with the closest
+     match. If nothing matches, estimate as below.
+   - Anything else: look up the street addresses on the **web**, find the distance, then estimate: walking about
+     12 min per km (20 min per mile), bike about 4 min per km, bus or car: the typical trip time plus 5 minutes.
+     Round up to the next 5 minutes and say "about".
    For a Zoom event, travel time is zero; plan the reminder 5 minutes before the start instead.
-3. Pick the reminder time: start time minus travel time minus buffer. If that time has already passed, tell the
-   student right away to leave now and include the link from step 5.
-4. Show the plan in one or two lines and ask before creating anything, for example:
-   "CHEM 101 in Hall 204 at 10 am, about 12 min walk. I'll text you at 9:43 to go. OK?"
-   Offer to repeat it for every meeting of that class. Create nothing until the student says yes.
-5. After the yes, create the reminder with Cubbie's **reminders** ability. Word it so it makes sense on its own
+4. Pick the reminder time: start time minus travel time minus buffer. If that time has already passed, tell the
+   student right away to leave now and include the link from step 6.
+5. Show the plan in one or two lines, saying where you assumed they start, and ask before creating anything:
+   "CHEM 101 in the MU at 10 am. You're in PSF until 9:15, about 7 min walk. I'll text you at 9:48 to go. OK?"
+   If they say they will be somewhere else, use that place instead. Offer to repeat it for every meeting of that
+   class. Create nothing until the student says yes.
+6. After the yes, create the reminder with Cubbie's **reminders** ability. Word it so it makes sense on its own
    later. The reminder text must:
    - name the Skill (class-to-map), the event, its start time and the place;
    - say about how long the trip takes;
@@ -61,25 +71,25 @@ Cubbie's **memory** so it is never asked twice:
 
 ## Building the map link
 
-For a campus walk that `scripts/route.mjs` handled in step 2, the link is the campus map link it printed, copied
-exactly (it starts with `https://nikman800.github.io/asu-map/`). It opens the route on a campus map with the
-walking steps and a button for Google Maps.
+For a campus walk that `scripts/route.mjs` handled in step 3, the link is the campus map link it printed, copied
+exactly (it starts with `https://nikman800.github.io/asu-map/?from=here`). It opens the route from the student's
+current position on a campus map, with the walking steps and a button for Google Maps.
 
-For any other trip, build the link yourself from the template for the student's map app. Do not search the web for a link and do not
-try to verify it: these URLs work for any address. Never send another kind of link instead (a building's web page,
+For any other trip, build the link yourself from the template for the student's map app. Leave out the starting
+point: the map app then starts from wherever the phone is. Do not search the web for a link and do not try to
+verify it: these URLs work for any address. Never send another kind of link instead (a building's web page,
 Street View, a search results page) and never add a note about the link.
 
-- Google Maps:
-  `https://www.google.com/maps/dir/?api=1&origin=<start>&destination=<place>&travelmode=<mode>`
+- Google Maps: `https://www.google.com/maps/dir/?api=1&destination=<place>&travelmode=<mode>`
   with mode `walking`, `bicycling`, `transit` or `driving`.
-- Apple Maps: `https://maps.apple.com/?saddr=<start>&daddr=<place>&dirflg=<flag>`
+- Apple Maps: `https://maps.apple.com/?daddr=<place>&dirflg=<flag>`
   with flag `w` for walking, `r` for bus, `d` for car (use `w` for bike).
 
-Fill in the full street addresses, URL-encoded: spaces as `+`, commas as `%2C`. Example, walking from Tempe
-Transportation Center to ASU's Memorial Union in Google Maps:
+Fill in the full street address, URL-encoded: spaces as `+`, commas as `%2C`. Example, walking to ASU's Memorial
+Union in Google Maps:
 
 ```text
-https://www.google.com/maps/dir/?api=1&origin=200+E+5th+St%2C+Tempe%2C+AZ&destination=301+E+Orange+St%2C+Tempe%2C+AZ&travelmode=walking
+https://www.google.com/maps/dir/?api=1&destination=301+E+Orange+St%2C+Tempe%2C+AZ&travelmode=walking
 ```
 
 ## Test runs
@@ -100,6 +110,7 @@ Transportation Center to the Memorial Union, about 12 minutes on foot.
   the same text and link, and confirm in one line. If the new time is after the event starts, say they would be
   late and ask if they still want it.
 - "skip" or "decline": confirm that today's reminder is skipped and that any repeating reminder still runs next time.
+- "I'm not in PSF" or another place: rerun step 3 from that place, then offer to remind them at the new time.
 
 ## Replies
 
@@ -109,16 +120,16 @@ Zoom link on its own line so it becomes a tappable preview.
 Example reminder:
 
 ```text
-class-to-map: time to head to CHEM 101 (10:00 am, Memorial Union). About 15 min walk.
+class-to-map: time to head to CHEM 101 (10:00 am, Memorial Union). About 7 min walk from PSF.
 Go now? Reply go, snooze 5, snooze 15, snooze 30, or skip
-https://www.google.com/maps/dir/?api=1&origin=200+E+5th+St%2C+Tempe%2C+AZ&destination=301+E+Orange+St%2C+Tempe%2C+AZ&travelmode=walking
+https://nikman800.github.io/asu-map/?from=here&to=MU&fallback=physical-science-f-wing
 ```
 
 ## What this Skill cannot do
 
 Cubbie talks over iMessage, so it cannot show buttons, open apps or sign in to Zoom on the phone, and it does not
-know the student's live location. It sends tappable links and uses the starting point the student gave. Say so
-plainly if the student asks for any of these.
+know the student's live location. It plans the reminder from where the schedule says the student will be, and
+its links route from wherever the student is when they tap them. Say so plainly if the student asks.
 
 ## When something fails
 
