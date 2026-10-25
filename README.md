@@ -43,7 +43,8 @@ You      yes
 
                               ⏰ 9:48 am
 
-Cubbie   class-to-map: time to head to CHEM 101 (10:00 am, Memorial Union). About 7 min walk from PSF.
+Cubbie   class-to-map: time to head to CHEM 101 (10:00 am, Memorial Union).
+         About 7 min walk from PSF.
          Go now? Reply go, snooze 5, snooze 15, snooze 30, or skip
          https://nikman800.github.io/asu-map/?from=here&to=MU&fallback=physical-science-f-wing
 
@@ -52,7 +53,7 @@ You      go
 Cubbie   Head southwest on the walkway (2 min)
          Continue south on Palm Walk (2 min)
          https://nikman800.github.io/asu-map/?from=here&to=MU&fallback=physical-science-f-wing
-         https://www.google.com/maps/dir/?api=1&destination=301+E+Orange+St%2C+Tempe%2C+AZ&travelmode=walking
+         (plus a Google Maps link for turn-by-turn)
          You've got this 🏃
 ```
 
@@ -60,7 +61,7 @@ Cubbie   Head southwest on the walkway (2 min)
 
 ## ✨ Why it's different
 
-| | |
+| | What you get |
 |---|---|
 | 🧠 **Knows where you'll be** | Reads your schedule from Canvas or Google Calendar and times the reminder from the class you're in right before, not a guess from home. |
 | 📍 **Routes from where you are** | Tap the link and the map plans the walk from your phone's live location, re-planning every 15 m as you go. Location off? It falls back to the building your schedule put you in. |
@@ -84,11 +85,10 @@ Give the map several starting points and it finds the **fairest place to meet**:
 
 ```mermaid
 flowchart LR
-    S[📅 Canvas or<br/>Google Calendar] --> C
-    C[🤖 Cubbie<br/>+ class-to-map] -- "route.mjs --live" --> R[🗺️ Campus router<br/>assets/campus.json]
-    R -- "minutes, steps, link" --> C
-    C -- "⏰ reminder" --> P[📱 Your iMessage]
-    P -- "tap" --> M[🧭 Live campus map<br/>GPS stays on your phone]
+    S["📅 Your schedule<br/>Canvas · Google Calendar"] --> C["🤖 Cubbie<br/>+ class-to-map"]
+    C <--> R["🗺️ Campus router<br/>walk time + steps"]
+    C --> P["⏰ Reminder<br/>in iMessage"]
+    P --> M["🧭 Live campus map<br/>GPS stays on your phone"]
 ```
 
 1. **Plan.** Cubbie finds the class and where you'll be beforehand, then runs the Skill's campus router to get the exact walking time.
